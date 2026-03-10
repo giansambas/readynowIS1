@@ -3,6 +3,7 @@ import session from "express-session";
 import { neon } from "@neondatabase/serverless";
 
 const app = express();
+app.set('trust proxy', 1); 
 app.use(express.json());
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -13,10 +14,11 @@ const sql = neon(databaseUrl || "");
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "readynow-secret-key",
-  resave: false,
+  resave: true, 
   saveUninitialized: false,
+  proxy: true, 
   cookie: { 
-    secure: true, 
+    secure: true,
     sameSite: 'none',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000
@@ -89,6 +91,7 @@ app.get("/api/report", async (req, res) => {
 
 app.post("/api/report", async (req, res) => {
   const user = (req.session as any).user;
+  console.log("Report attempt by user:", user?.username || "Guest");
   if (!user) return res.status(401).json({ error: "Unauthorized" });
   const { location, disaster, description } = req.body;
   try {
