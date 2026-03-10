@@ -21,6 +21,7 @@ import {
 import { BARANGAY_DATA, EVACUATION_DATA } from './constants';
 import { getPreparednessGuidance } from './services/geminiService';
 
+// --- Types ---
 interface Report {
   id: number;
   user_id: number;
@@ -290,11 +291,17 @@ const Dashboard = ({ onSelectLocation, onReport }: { onSelectLocation: () => voi
       .then(res => res.ok ? res.json() : [])
       .then(data => Array.isArray(data) ? setReports(data) : setReports([]))
       .catch(() => setReports([]));
-
+    // Mock news for now
     setNews([
       { title: "QC DRRMO issues rainfall warning", source: "Local Government", time: "2h ago", url: "https://quezoncity.gov.ph/departments/disaster-risk-reduction-and-management-office-drrmo/" },
       { title: "New evacuation centers opened in District 2", source: "QC News", time: "5h ago", url: "https://quezoncity.gov.ph/qclocalnews/" },
       { title: "PAGASA monitors tropical depression", source: "PAGASA", time: "1d ago", url: "https://www.pagasa.dost.gov.ph/" },
+      { title: "Red Cross QC conducts first aid training", source: "Red Cross", time: "1d ago", url: "https://redcross.org.ph/" },
+      { title: "MMDA announces road clearing operations", source: "MMDA", time: "2d ago", url: "https://www.mmda.gov.ph/" },
+      { title: "QC Health Dept issues dengue alert", source: "Health Dept", time: "2d ago", url: "https://quezoncity.gov.ph/departments/city-health-department/" },
+      { title: "BFP QC conducts fire safety inspection", source: "BFP", time: "3d ago", url: "https://bfp.gov.ph/" },
+      { title: "Meralco schedules maintenance in QC", source: "Meralco", time: "3d ago", url: "https://www.meralco.com.ph/" },
+      { title: "QC LGU launches climate action plan", source: "Local Government", time: "4d ago", url: "https://quezoncity.gov.ph/" },
     ]);
   }, []);
 
@@ -336,8 +343,8 @@ const Dashboard = ({ onSelectLocation, onReport }: { onSelectLocation: () => voi
                   className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100 hover:border-red-200 hover:bg-white transition-all cursor-pointer group shadow-sm hover:shadow-md block"
                 >
                   <p className="text-[10px] font-bold text-red-700 uppercase tracking-widest mb-2">{item.source}</p>
-                  <h4 className="font-bold text-zinc-900 group-hover:text-red-800 transition-colors leading-tight">{item.title}</h4>
-                  <p className="text-[10px] text-zinc-400 mt-3 font-medium">{item.time}</p>
+                  <h4 className="font-bold text-zinc-900 group-hover:text-red-800 transition-colors leading-tight mb-2">{item.title}</h4>
+                  <p className="text-[10px] text-zinc-400 font-medium">{item.time}</p>
                 </a>
               ))}
             </div>
@@ -345,11 +352,11 @@ const Dashboard = ({ onSelectLocation, onReport }: { onSelectLocation: () => voi
         </div>
 
         <div className="bg-white rounded-3xl p-6 md:p-8 border border-zinc-100 shadow-sm h-fit sticky top-24">
-  <h3 className="text-lg md:text-xl font-bold mb-6 flex items-center gap-2">
-    <AlertTriangle className="text-amber-500" />
-    Community Reports
-  </h3>
-  <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+          <h3 className="text-lg md:text-xl font-bold mb-6 flex items-center gap-2">
+            <AlertTriangle className="text-amber-500" />
+            Community Reports
+          </h3>
+          <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
             {reports.length === 0 ? (
               <p className="text-zinc-500 text-center py-8">No community reports yet.</p>
             ) : (
@@ -453,12 +460,10 @@ const MapInfo = ({ district, barangay }: { district: string, barangay: string })
   const [selectedFacility, setSelectedFacility] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-
     setSelectedFacility(null);
   }, [barangay]);
 
   React.useEffect(() => {
-
     fetch("https://api.openweathermap.org/data/2.5/weather?q=Quezon City,PH&units=metric&appid=585f6af2cbff1e00738777e8c9af0136")
       .then(res => res.json())
       .then(data => {
@@ -752,7 +757,7 @@ const About = () => (
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-zinc-100 shadow-sm">
         <h3 className="text-lg md:text-xl font-bold mb-4">Our Purpose</h3>
         <p className="text-zinc-600 text-sm md:text-base leading-relaxed">
-          In a city as large as Quezon City, localized information is key. ReadyNow bridges the gap between official data and resident needs, providing a centralized hub for critical safety information. We plan to add more cities but for now we only covered Quezon city since it is one of the most disaster-prone areas in the Philippines.
+          In a city as large as Quezon City, localized information is key. ReadyNow bridges the gap between official data and resident needs, providing a centralized hub for critical safety information.
         </p>
       </div>
     </div>
@@ -852,6 +857,8 @@ const HomeLanding = ({ onStart }: { onStart: () => void }) => (
   </div>
 );
 
+// --- Main App ---
+
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('home');
@@ -861,7 +868,6 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
   React.useEffect(() => {
-
     fetch('/api/auth/me', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
