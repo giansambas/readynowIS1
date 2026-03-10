@@ -21,7 +21,6 @@ import {
 import { BARANGAY_DATA, EVACUATION_DATA } from './constants';
 import { getPreparednessGuidance } from './services/geminiService';
 
-// --- Types ---
 interface Report {
   id: number;
   user_id: number;
@@ -287,8 +286,11 @@ const Dashboard = ({ onSelectLocation, onReport }: { onSelectLocation: () => voi
   const [news, setNews] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    fetch('/api/report', { credentials: 'include' }).then(res => res.json()).then(setReports);
-    // Mock news for now as fetching from external RSS might be tricky in this env without a proxy
+    fetch('/api/report', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : [])
+      .then(data => Array.isArray(data) ? setReports(data) : setReports([]))
+      .catch(() => setReports([]));
+
     setNews([
       { title: "QC DRRMO issues rainfall warning", source: "Local Government", time: "2h ago", url: "https://quezoncity.gov.ph/departments/disaster-risk-reduction-and-management-office-drrmo/" },
       { title: "New evacuation centers opened in District 2", source: "QC News", time: "5h ago", url: "https://quezoncity.gov.ph/qclocalnews/" },
@@ -451,12 +453,12 @@ const MapInfo = ({ district, barangay }: { district: string, barangay: string })
   const [selectedFacility, setSelectedFacility] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    // Reset selected facility when barangay changes
+
     setSelectedFacility(null);
   }, [barangay]);
 
   React.useEffect(() => {
-    // Fetch Weather
+
     fetch("https://api.openweathermap.org/data/2.5/weather?q=Quezon City,PH&units=metric&appid=585f6af2cbff1e00738777e8c9af0136")
       .then(res => res.json())
       .then(data => {
@@ -850,8 +852,6 @@ const HomeLanding = ({ onStart }: { onStart: () => void }) => (
   </div>
 );
 
-// --- Main App ---
-
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('home');
@@ -861,7 +861,7 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
   React.useEffect(() => {
-    // Check if user is logged in
+
     fetch('/api/auth/me', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
