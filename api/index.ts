@@ -5,21 +5,23 @@ import { neon } from "@neondatabase/serverless";
 const app = express();
 app.use(express.json());
 
-const sql = neon(process.env.DATABASE_URL!);
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  console.warn("DATABASE_URL is not defined. Database features will fail.");
+}
+const sql = neon(databaseUrl || "");
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "readynow-secret-key",
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    secure: true, // Vercel uses HTTPS by default
+    secure: true, 
     sameSite: 'none',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
-
-// --- Auth Routes ---
 
 app.post("/api/auth/register", async (req, res) => {
   const { username, password } = req.body;
@@ -70,8 +72,6 @@ app.get("/api/auth/me", (req, res) => {
   res.json({ user: (req.session as any).user || null });
 });
 
-// --- Report Routes ---
-
 app.get("/api/report", async (req, res) => {
   try {
     const reports = await sql`
@@ -102,5 +102,4 @@ app.post("/api/report", async (req, res) => {
   }
 });
 
-// Export for Vercel
 export default app;
