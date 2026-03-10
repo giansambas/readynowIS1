@@ -344,12 +344,12 @@ const Dashboard = ({ onSelectLocation, onReport }: { onSelectLocation: () => voi
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 md:p-8 border border-zinc-100 shadow-sm h-fit">
-          <h3 className="text-lg md:text-xl font-bold mb-6 flex items-center gap-2">
-            <AlertTriangle className="text-amber-500" />
-            Community Reports
-          </h3>
-          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        <div className="bg-white rounded-3xl p-6 md:p-8 border border-zinc-100 shadow-sm h-fit sticky top-24">
+  <h3 className="text-lg md:text-xl font-bold mb-6 flex items-center gap-2">
+    <AlertTriangle className="text-amber-500" />
+    Community Reports
+  </h3>
+  <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
             {reports.length === 0 ? (
               <p className="text-zinc-500 text-center py-8">No community reports yet.</p>
             ) : (
